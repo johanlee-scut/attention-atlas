@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10171a">
+  <title>注意力演化图谱 · Attention Atlas</title>
+  <meta name="description" content="用同一份 8×512 输入，逐步演示 Softmax Attention、MHA、线性 Attention、Delta、GDN、GVA 与 Kimi Delta Attention。">
+  <link rel="stylesheet" href="style.css">
+  <script src="atlas.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="mast">
+      <a class="brand" href="./"><span class="logo" aria-hidden="true">◈</span> ATTENTION ATLAS</a>
+      <div class="mast-right"><span class="lamp"></span> 交互实验 <span class="mast-divider"></span><a href="#sources">论文与说明 ↗</a></div>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">序列建模 / 01</div>
+          <h1>注意力<span>演化图谱</span></h1>
+          <p>用同一份输入，看计算如何从逐对比较走向递推状态，<br class="wide-only">再让记忆学会覆盖、遗忘和逐通道保留。</p>
+        </div>
+        <div class="input-spec" aria-label="输入 8 个 token，每个 512 维">
+          <span>固定输入 X</span><strong>8<span> × </span>512</strong><small>序列长度 × 隐藏维度</small>
+        </div>
+      </section>
+      <nav class="chapters" aria-label="教学章节" id="chapters"></nav>
+      <section class="lesson" aria-labelledby="lesson-title">
+        <div class="lesson-main">
+          <div class="lesson-header">
+            <div>
+              <div class="eyebrow" id="chapter-id"></div>
+              <h2 id="lesson-title"></h2>
+            </div>
+            <span class="badge" id="chapter-type"></span>
+          </div>
+          <div class="token-panel">
+            <div class="sub-label"><span>输入序列</span><span>每个 token ∈ ℝ⁵¹²</span></div>
+            <div class="tokens" id="tokens" aria-label="选择当前 token"></div>
+          </div>
+          <div id="stage" class="stage" aria-label="当前计算的动画演示"></div>
+          <div class="transport">
+            <div class="transport-buttons">
+              <button class="play" id="play" type="button" aria-label="播放当前章节">▶ 播放</button>
+              <button id="prev" type="button" aria-label="上一步">←</button>
+              <button id="next" type="button" aria-label="下一步">→</button>
+            </div>
+            <label class="scrub" for="progress">
+              <span class="sr-only">章节进度</span>
+              <input id="progress" type="range" min="0" value="0">
+            </label>
+            <output id="counter" for="progress"></output>
+          </div>
+          <div id="step-picker" class="step-picker" aria-label="本 token 的计算步骤"></div>
+        </div>
+        <aside class="inspector" aria-label="公式与操作">
+          <div class="inspector-heading"><span class="lamp"></span> 当前步骤</div>
+          <h3 id="step-title" aria-live="polite"></h3>
+          <p id="explanation"></p>
+          <div class="equation"><span>计算式</span><div id="equation"></div></div>
+          <div id="settings"></div>
+          <div class="try-it"><span>动手试试</span><p id="prompt"></p></div>
+          <button id="advance" class="advance" type="button"></button>
+        </aside>
+      </section>
+      <details id="sources" class="sources">
+        <summary>实现范围与参考论文</summary>
+        <p>固定随机种子生成 8×512 输入及投影权重，演示因果 self-attention。单头视图展示一个 64 维头。矩阵切片从完整计算结果中读取。示例省略了训练、短卷积、部分归一化、输出门和推理内核优化。</p>
+        <ul>
+          <li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> · 缩放点积与 MHA</li>
+          <li><a href="https://arxiv.org/abs/2006.16236">Transformers are RNNs</a> · 核特征分解与递推归一化</li>
+          <li><a href="https://arxiv.org/abs/2406.06484">Parallelizing Linear Transformers with the Delta Rule</a> · DeltaNet</li>
+          <li><a href="https://arxiv.org/html/2412.06464v2">Gated Delta Networks</a> · 门控 Delta 更新</li>
+          <li><a href="https://arxiv.org/html/2603.05931v1">A Persistent-State Dataflow Accelerator for Gated DeltaNet</a> · §2.2，Qwen3-Next 的 value 头分组</li>
+          <li><a href="https://arxiv.org/html/2510.26692v1">Kimi Linear</a> · §2.2，KDA 的逐通道遗忘</li>
+        </ul>
+        <p>本页的 GVA 指 Qwen3-Next GDN 中的 value 头分组，也就是多组 value 头共用较少的 Q/K 头。它是一种头部布局，可以与不同递推规则搭配。</p>
+      </details>
+    </main>
+    <footer><span>ATTENTION ATLAS / 交互教学原型</span><span>无需登录 · 本地浏览器计算</span></footer>
+  </div>
+</body>
+</html>
